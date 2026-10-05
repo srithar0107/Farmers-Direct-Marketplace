@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Farmers' Direct Marketplace - Build Roadmap</title>
+<style>
+:root{--bg:#f6f8f4;--ink:#1d2a22;--mute:#5d6b62;--line:#d5ddd3;--leaf:#2f6b3f;--grape:#5b2a6e;--card:#fff}
+@media (prefers-color-scheme:dark){:root{--bg:#121a15;--ink:#e6eee8;--mute:#9bab9f;--line:#2b3a30;--leaf:#6fc287;--grape:#c79ad8;--card:#1a251e}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Georgia,"Times New Roman",serif}
+main{max-width:860px;margin:0 auto;padding:28px 18px 60px}
+h1{font-size:2rem;margin:0 0 4px;color:var(--leaf)}
+.sub{color:var(--mute);margin:0 0 18px}
+.bar{height:10px;background:var(--line);border-radius:6px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--leaf);transition:width .3s}
+.pct{font:14px system-ui,sans-serif;color:var(--mute);margin:6px 0 24px}
+section{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--leaf);border-radius:6px;padding:14px 18px;margin:0 0 16px}
+section.later{border-left-color:var(--grape)}
+h2{font-size:1.15rem;margin:0 0 2px}
+.an{font:14px system-ui,sans-serif;color:var(--mute);margin:0 0 8px}
+label{display:flex;gap:10px;align-items:flex-start;padding:5px 0;cursor:pointer;font:15px/1.4 system-ui,sans-serif}
+input{margin-top:3px;accent-color:var(--leaf);width:17px;height:17px;flex:none}
+input:focus-visible{outline:2px solid var(--grape);outline-offset:2px}
+label.done span{text-decoration:line-through;color:var(--mute)}
+</style>
+</head>
+<body>
+<main>
+<h1>Farmers' Direct Marketplace</h1>
+<p class="sub">MERN + Bootstrap + role-based access (admin, farmer, customer). Tick steps as you finish them; progress is saved in this browser.</p>
+<div class="bar"><i id="fill"></i></div>
+<div class="pct" id="pct"></div>
+<div id="list"></div>
+</main>
+<script>
+var P=[
+{t:"Phase 1 - Backend foundation",a:"Analyse: does the server start, does MongoDB connect, do the models match the college brief?",s:[
+["Backend setup, packages, .env",1],["index.js with Express + MongoDB connection",1],["User and Product models",1],["Register and login routes (initial version)",1],["Re-run node index.js and confirm both console messages",0]]},
+{t:"Phase 2 - Security layer",a:"Analyse: can a logged-out person reach protected data? Can a customer reach an admin route?",s:[
+["Auth middleware (verify JWT)",0],["Role middleware (admin / farmer / customer)",0],["Block public registration as admin",0],["Validation: email format, password strength, required fields",0],["Change password API",0],["Test every route in Postman or Thunder Client",0]]},
+{t:"Phase 3 - Data APIs",a:"Analyse: farmers touch only their own products; admin touches everything; customers read only.",s:[
+["Product create / read / update / delete APIs",0],["Farmer ownership check on update and delete",0],["Search by name and category (public list)",0],["Admin user CRUD APIs",0],["Seed one admin account",0]]},
+{t:"Phase 4 - React setup and shared UI",a:"Analyse: does the React app talk to the API without CORS errors?",s:[
+["Create React app, install Bootstrap, axios, react-router-dom",0],["Navbar that changes by role",0],["Home page",0],["Register page with validation messages",0],["Login page",0],["Auth context (token + user in state and localStorage)",0],["Protected routes by role",0]]},
+{t:"Phase 5 - Role screens",a:"Analyse: log in as each role and check you only see that role's pages.",s:[
+["Customer marketplace with search",0],["Product details page",0],["Farmer dashboard",0],["Farmer product list, add, edit, delete",0],["Admin dashboard (totals)",0],["Admin user management",0],["Admin product management",0],["Change password page and logout",0]]},
+{t:"Phase 6 - Finish for the IA",a:"Analyse: test in Chrome DevTools device mode (phone and desktop) and read the console for errors.",s:[
+["Integration test of full flow for all three roles",0],["Error handling and loading messages",0],["Responsive check in Chrome DevTools",0],["Chrome Lighthouse run (accessibility, performance)",0],["Bug fixing",0],["README, screenshots, viva question notes, demo script",0]]},
+{t:"After the IA (same codebase)",later:1,a:"Analyse: pick one phase at a time. Do not start until the IA is submitted.",s:[
+["Images, categories, farmer profiles",0],["Orders and order status",0],["Farmer verification, location features, analytics",0],["Price transparency and decision support",0],["Deployment, tests, GitHub-ready README",0],["Optional: Google Maps, Google sign-in, Google Search visibility",0]]}
+];
+var saved={};try{saved=JSON.parse(localStorage.getItem("fdm")||"{}")}catch(e){}
+var list=document.getElementById("list"),n=0;
+P.forEach(function(p,i){
+ var sec=document.createElement("section");if(p.later)sec.className="later";
+ sec.innerHTML="<h2>"+p.t+"</h2><p class='an'>"+p.a+"</p>";
+ p.s.forEach(function(s,j){
+  var k=i+"-"+j,on=k in saved?saved[k]:!!s[1],l=document.createElement("label"),c=document.createElement("input");
+  c.type="checkbox";c.checked=on;c.dataset.k=k;n++;
+  var sp=document.createElement("span");sp.textContent=s[0];
+  l.className=on?"done":"";l.appendChild(c);l.appendChild(sp);sec.appendChild(l);
+  c.onchange=function(){saved[k]=c.checked;try{localStorage.setItem("fdm",JSON.stringify(saved))}catch(e){}l.className=c.checked?"done":"";upd()};
+ });
+ list.appendChild(sec);
+});
+function upd(){var b=document.querySelectorAll("input:checked").length;
+ document.getElementById("fill").style.width=(100*b/n)+"%";
+ document.getElementById("pct").textContent=b+" of "+n+" steps done";}
+upd();
+</script>
+</body>
+</html>

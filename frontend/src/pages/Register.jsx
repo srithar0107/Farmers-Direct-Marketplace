@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api, { errMsg } from "../api.js";
 import farmerImage from "../assets/farmer-login.jpg";
+import customerImage from "../assets/customer-login.jpg";
 
 export default function Register() {
   const [form, setForm] = useState({
@@ -48,13 +49,13 @@ export default function Register() {
 
   const isFarmer = form.role === "farmer";
 
-  const farmerStyle = isFarmer
-    ? {
-        backgroundImage: `linear-gradient(135deg, rgba(19, 125, 42, 0.82), rgba(75, 180, 58, 0.62)), url(${farmerImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }
-    : undefined;
+  const visualStyle = {
+    backgroundImage: isFarmer
+      ? `linear-gradient(135deg, rgba(19, 125, 42, 0.82), rgba(75, 180, 58, 0.62)), url(${farmerImage})`
+      : `linear-gradient(180deg, rgba(23, 107, 53, 0.55), rgba(23, 107, 53, 0.9)), url(${customerImage})`,
+    backgroundSize: "cover",
+    backgroundPosition: isFarmer ? "center" : "center top",
+  };
 
   return (
     <div className="register-page">
@@ -93,14 +94,7 @@ export default function Register() {
           justify-content: space-between;
           color: white;
           overflow: hidden;
-        }
-
-        .register-visual.farmer {
           background-color: #176b35;
-        }
-
-        .register-visual.buyer {
-          background: linear-gradient(145deg, #176b35, #4caf45);
         }
 
         .brand {
@@ -110,6 +104,7 @@ export default function Register() {
           font-size: 27px;
           font-weight: 700;
           letter-spacing: -0.5px;
+          text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
 
         .brand-icon {
@@ -126,15 +121,15 @@ export default function Register() {
           margin: 0 0 20px;
           font-weight: 750;
           letter-spacing: -1.5px;
-          text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+          text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         }
 
         .visual-content p {
           font-size: 18px;
           line-height: 1.65;
           margin: 0;
-          color: rgba(255, 255, 255, 0.94);
-          text-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
+          color: rgba(255, 255, 255, 0.95);
+          text-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
         }
 
         .visual-badge {
@@ -316,10 +311,7 @@ export default function Register() {
 
       <div className="register-card">
         {/* LEFT SIDE */}
-        <div
-          className={`register-visual ${isFarmer ? "farmer" : "buyer"}`}
-          style={farmerStyle}
-        >
+        <div className="register-visual" style={visualStyle}>
           <div className="brand">
             <span className="brand-icon">🌿</span>
             <span>Farmers' Direct</span>

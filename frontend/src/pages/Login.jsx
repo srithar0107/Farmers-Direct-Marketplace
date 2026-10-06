@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import api, { errMsg, homeFor } from "../api.js";
 import { useAuth } from "../AuthContext.jsx";
 import farmerImage from "../assets/farmer-login.jpg";
+import customerImage from "../assets/customer-login.jpg";
 
 export default function Login() {
   const [mode, setMode] = useState("farmer");
@@ -13,13 +14,13 @@ export default function Login() {
 
   const isFarmer = mode === "farmer";
 
-  const visualStyle = isFarmer
-    ? {
-        backgroundImage: `linear-gradient(135deg, rgba(19, 125, 42, 0.82), rgba(75, 180, 58, 0.62)), url(${farmerImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }
-    : undefined;
+  const visualStyle = {
+    backgroundImage: isFarmer
+      ? `linear-gradient(135deg, rgba(19, 125, 42, 0.82), rgba(75, 180, 58, 0.62)), url(${farmerImage})`
+      : `linear-gradient(180deg, rgba(23, 107, 53, 0.55), rgba(23, 107, 53, 0.9)), url(${customerImage})`,
+    backgroundSize: "cover",
+    backgroundPosition: isFarmer ? "center" : "center top",
+  };
 
   const submit = async (e) => {
     e.preventDefault();
@@ -68,11 +69,8 @@ export default function Login() {
           justify-content: space-between;
           color: white;
           overflow: hidden;
-          transition: background 0.3s ease;
+          background-color: #176b35;
         }
-
-        .login-visual.farmer { background-color: #176b35; }
-        .login-visual.buyer { background: linear-gradient(145deg, #176b35, #4caf45); }
 
         .login-brand {
           display: flex;
@@ -81,6 +79,7 @@ export default function Login() {
           font-size: 27px;
           font-weight: 700;
           letter-spacing: -0.5px;
+          text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
 
         .login-visual-content { max-width: 480px; }
@@ -91,15 +90,15 @@ export default function Login() {
           margin: 0 0 20px;
           font-weight: 750;
           letter-spacing: -1.5px;
-          text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+          text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         }
 
         .login-visual-content p {
           font-size: 18px;
           line-height: 1.65;
           margin: 0;
-          color: rgba(255, 255, 255, 0.94);
-          text-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
+          color: rgba(255, 255, 255, 0.95);
+          text-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
         }
 
         .login-form-area {
@@ -238,10 +237,7 @@ export default function Login() {
 
       <div className="login-card">
         {/* LEFT SIDE */}
-        <div
-          className={`login-visual ${isFarmer ? "farmer" : "buyer"}`}
-          style={visualStyle}
-        >
+        <div className="login-visual" style={visualStyle}>
           <div className="login-brand">
             <span>🌿</span>
             <span>Farmers' Direct</span>

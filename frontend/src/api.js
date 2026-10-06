@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api"
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
 });
 
 api.interceptors.request.use((config) => {
@@ -10,8 +10,38 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-export const errMsg = (e) => e.response?.data?.message || "Something went wrong. Is the backend running?";
+export const errMsg = (e) =>
+  e.response?.data?.message || "Something went wrong. Is the backend running?";
+
 export const homeFor = (role) =>
-  role === "admin" ? "/admin/dashboard" : role === "farmer" ? "/farmer/dashboard" : "/marketplace";
-export const CATEGORIES = ["Fruits", "Vegetables", "Grains", "Pulses", "Dairy", "Spices", "Other"];
+  role === "admin"
+    ? "/admin/dashboard"
+    : role === "farmer"
+    ? "/farmer/dashboard"
+    : "/marketplace";
+
+export const CATEGORIES = [
+  "Vegetables",
+  "Fruits",
+  "Greens",
+  "Grains",
+  "Pulses",
+  "Spices",
+  "Plantation",
+  "Dairy",
+  "Other",
+];
+
+export const CATEGORY_ICONS = {
+  Vegetables: "🥬",
+  Fruits: "🍎",
+  Greens: "🌿",
+  Grains: "🌾",
+  Pulses: "🌱",
+  Spices: "🌶️",
+  Plantation: "🥥",
+  Dairy: "🥛",
+  Other: "🧺",
+};
+
 export default api;

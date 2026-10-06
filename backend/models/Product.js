@@ -54,6 +54,21 @@ const productSchema = new mongoose.Schema(
       type: String,
       enum: ["Available", "Out of Stock"],
       default: "Available"
+    },
+
+    image: {
+      type: String,
+      trim: true,
+      default: ""
+    },
+
+    harvestDate: {
+      type: Date
+    },
+
+    organic: {
+      type: Boolean,
+      default: false
     }
   },
   {

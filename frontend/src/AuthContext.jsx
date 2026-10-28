@@ -11,11 +11,22 @@ export function AuthProvider({ children }) {
     localStorage.setItem("user", JSON.stringify(data.user));
     setUser(data.user);
   };
+
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);
   };
 
-  return <AuthContext.Provider value={{ user, login, logout }}>{children}</AuthContext.Provider>;
+  const updateUser = (updatedUser) => {
+    const merged = { ...user, ...updatedUser };
+    localStorage.setItem("user", JSON.stringify(merged));
+    setUser(merged);
+  };
+
+  return (
+    <AuthContext.Provider value={{ user, login, logout, updateUser }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }

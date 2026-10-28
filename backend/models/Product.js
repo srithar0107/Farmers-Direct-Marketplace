@@ -69,6 +69,29 @@ const productSchema = new mongoose.Schema(
     organic: {
       type: Boolean,
       default: false
+    },
+
+    soldQuantity: {
+      type: Number,
+      default: 0,
+      min: 0
+    },
+
+    lowStockThreshold: {
+      type: Number,
+      default: 10,
+      min: 0
+    },
+
+    isSample: {
+      type: Boolean,
+      default: false
+    },
+
+    district: {
+      type: String,
+      trim: true,
+      default: ""
     }
   },
   {

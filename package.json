@@ -1,0 +1,32 @@
+{
+  "name": "farmers-direct-marketplace",
+  "version": "1.0.0",
+  "description": "MERN + Bootstrap, roles: admin / farmer / customer.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node backend/index.js",
+    "backend": "npm --prefix backend start",
+    "frontend": "npm --prefix frontend dev",
+    "check-db": "node backend/checkConnection.js",
+    "seed": "node backend/seedAdmin.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/srithar0107/Farmers-Direct-Marketplace.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/srithar0107/Farmers-Direct-Marketplace/issues"
+  },
+  "homepage": "https://github.com/srithar0107/Farmers-Direct-Marketplace#readme",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.9",
+    "express": "^5.3.0",
+    "mongoose": "^9.11.4"
+  }
+}

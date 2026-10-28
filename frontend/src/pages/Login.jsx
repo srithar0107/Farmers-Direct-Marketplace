@@ -2,341 +2,278 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api, { errMsg, homeFor } from "../api.js";
 import { useAuth } from "../AuthContext.jsx";
-import farmerImage from "../assets/farmer-login.jpg";
+import { t, getLang, setLang } from "../i18n.js";
 import customerImage from "../assets/customer-login.jpg";
 
 export default function Login() {
-  const [mode, setMode] = useState("farmer");
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [lang, setLanguage] = useState(getLang());
+  const [identifier, setIdentifier] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const isFarmer = mode === "farmer";
-
-  const visualStyle = {
-    backgroundImage: isFarmer
-      ? `linear-gradient(135deg, rgba(19, 125, 42, 0.82), rgba(75, 180, 58, 0.62)), url(${farmerImage})`
-      : `linear-gradient(180deg, rgba(23, 107, 53, 0.55), rgba(23, 107, 53, 0.9)), url(${customerImage})`,
-    backgroundSize: "cover",
-    backgroundPosition: isFarmer ? "center" : "center top",
+  const handleLangChange = (newLang) => {
+    setLang(newLang);
+    setLanguage(newLang);
   };
 
   const submit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
     try {
-      const { data } = await api.post("/auth/login", form);
+      const { data } = await api.post("/auth/login", { identifier, password });
       login(data);
       navigate(homeFor(data.user.role));
     } catch (err) {
       setError(errMsg(err));
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="login-page">
+    <div className="buyer-login-page">
       <style>{`
-        * { box-sizing: border-box; }
-
-        .login-page {
+        .buyer-login-page {
           min-height: calc(100vh - 70px);
           background: #f4f8ed;
           display: flex;
           align-items: center;
           justify-content: center;
-          padding: 30px 20px;
+          padding: 24px 16px;
         }
-
-        .login-card {
+        .bl-card {
           width: 100%;
-          max-width: 1100px;
-          min-height: 620px;
-          background: white;
+          max-width: 1080px;
+          min-height: 600px;
+          background: #fff;
           border-radius: 28px;
           overflow: hidden;
           display: grid;
-          grid-template-columns: 46% 54%;
+          grid-template-columns: 48% 52%;
           box-shadow: 0 18px 50px rgba(30, 80, 30, 0.12);
+          border: 1px solid #dce8d6;
         }
-
-        .login-visual {
+        .bl-visual {
           position: relative;
-          min-height: 620px;
-          padding: 55px;
+          min-height: 600px;
+          padding: 48px;
           display: flex;
           flex-direction: column;
           justify-content: space-between;
-          color: white;
-          overflow: hidden;
-          background-color: #176b35;
+          color: #fff;
+          background: linear-gradient(180deg, rgba(23, 107, 53, 0.65), rgba(23, 107, 53, 0.94)), url(${customerImage});
+          background-size: cover;
+          background-position: center top;
         }
-
-        .login-brand {
-          display: flex;
+        .bl-badge {
+          display: inline-flex;
           align-items: center;
-          gap: 10px;
-          font-size: 27px;
+          gap: 6px;
+          background: rgba(255,255,255,0.22);
+          backdrop-filter: blur(8px);
+          padding: 6px 14px;
+          border-radius: 20px;
           font-weight: 700;
-          letter-spacing: -0.5px;
-          text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+          font-size: 13px;
+          border: 1px solid rgba(255,255,255,0.3);
         }
-
-        .login-visual-content { max-width: 480px; }
-
-        .login-visual-content h1 {
-          font-size: clamp(36px, 4vw, 52px);
-          line-height: 1.08;
-          margin: 0 0 20px;
-          font-weight: 750;
-          letter-spacing: -1.5px;
-          text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-        }
-
-        .login-visual-content p {
-          font-size: 18px;
-          line-height: 1.65;
-          margin: 0;
-          color: rgba(255, 255, 255, 0.95);
-          text-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
-        }
-
-        .login-form-area {
-          padding: 55px 60px;
+        .bl-form-area {
+          padding: 48px 52px;
           display: flex;
           flex-direction: column;
           justify-content: center;
         }
-
-        .login-heading h2 {
-          margin: 0;
-          font-size: 36px;
-          color: #172b18;
-          letter-spacing: -1px;
+        .bl-lang-bar {
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 20px;
         }
-
-        .login-heading p {
-          margin: 8px 0 28px;
-          color: #687568;
-          font-size: 16px;
-        }
-
-        .login-switch {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          background: #eef1e7;
-          padding: 5px;
-          border-radius: 16px;
-          margin-bottom: 28px;
-        }
-
-        .login-switch button {
-          border: 0;
-          background: transparent;
-          padding: 14px 10px;
-          border-radius: 12px;
-          font-size: 16px;
-          font-weight: 600;
-          color: #566052;
+        .bl-lang-btn {
+          border: 1px solid #c8dcc3;
+          background: #f7faf5;
+          color: #2e6633;
+          padding: 4px 12px;
+          border-radius: 20px;
+          font-size: 13px;
+          font-weight: 700;
           cursor: pointer;
-          transition: 0.2s ease;
+          transition: all 0.2s;
         }
-
-        .login-switch button.active {
-          background: white;
-          color: #187c2e;
-          box-shadow: 0 4px 12px rgba(30, 80, 30, 0.10);
+        .bl-lang-btn.active {
+          background: #1e7e34;
+          color: #fff;
+          border-color: #1e7e34;
         }
-
-        .login-group { margin-bottom: 17px; }
-
-        .login-group label {
-          display: block;
-          margin-bottom: 7px;
-          font-weight: 600;
-          color: #263426;
-          font-size: 14px;
+        .bl-title {
+          font-size: clamp(28px, 3.5vw, 36px);
+          font-weight: 800;
+          color: #172b18;
+          margin: 0 0 8px;
+          letter-spacing: -0.5px;
         }
-
-        .login-input {
-          width: 100%;
-          height: 50px;
-          border: 1px solid #dce3d7;
-          border-radius: 12px;
-          padding: 0 15px;
+        .bl-sub {
+          color: #556b57;
           font-size: 15px;
-          outline: none;
-          transition: 0.2s ease;
-          background: #fff;
+          line-height: 1.5;
+          margin-bottom: 24px;
         }
-
-        .login-input:focus {
-          border-color: #2fa43a;
-          box-shadow: 0 0 0 4px rgba(47, 164, 58, 0.10);
-        }
-
-        .login-button {
+        .bl-input {
           width: 100%;
           height: 52px;
+          border: 1px solid #cfe0cb;
+          border-radius: 14px;
+          padding: 0 16px;
+          font-size: 15px;
+          outline: none;
+          transition: 0.2s;
+          background: #fafdf9;
+        }
+        .bl-input:focus {
+          border-color: #2e7d32;
+          background: #fff;
+          box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.12);
+        }
+        .bl-btn {
+          width: 100%;
+          height: 52px;
+          background: linear-gradient(135deg, #1e7e34, #28a745);
+          color: #fff;
           border: 0;
-          border-radius: 12px;
-          background: linear-gradient(90deg, #16872c, #51bc43);
-          color: white;
+          border-radius: 14px;
           font-size: 16px;
-          font-weight: 700;
+          font-weight: 800;
           cursor: pointer;
-          margin-top: 5px;
-          transition: 0.2s ease;
+          transition: transform 0.2s, box-shadow 0.2s;
         }
-
-        .login-button:hover {
-          transform: translateY(-1px);
-          box-shadow: 0 8px 18px rgba(34, 137, 47, 0.22);
+        .bl-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 20px rgba(30, 126, 52, 0.25);
         }
-
-        .login-error {
-          background: #fff0f0;
-          color: #b42318;
-          border: 1px solid #f3c5c5;
-          padding: 11px 14px;
-          border-radius: 10px;
-          margin-bottom: 18px;
-          font-size: 14px;
-        }
-
-        .login-link {
-          text-align: center;
-          margin: 20px 0 0;
-          color: #697469;
-          font-size: 14px;
-        }
-
-        .login-link a {
-          color: #17842d;
-          font-weight: 700;
-          text-decoration: none;
-        }
-
-        .login-link a:hover { text-decoration: underline; }
-
-        @media (max-width: 850px) {
-          .login-card { grid-template-columns: 1fr; }
-          .login-visual { min-height: 300px; padding: 35px; }
-          .login-visual-content h1 { font-size: 36px; }
-          .login-form-area { padding: 40px 30px; }
-        }
-
-        @media (max-width: 500px) {
-          .login-page { padding: 12px; }
-          .login-card { border-radius: 18px; }
-          .login-visual { min-height: 280px; padding: 25px; }
-          .login-form-area { padding: 30px 20px; }
-          .login-heading h2 { font-size: 30px; }
+        @media (max-width: 860px) {
+          .bl-card { grid-template-columns: 1fr; }
+          .bl-visual { min-height: 240px; padding: 28px; }
+          .bl-form-area { padding: 32px 24px; }
         }
       `}</style>
 
-      <div className="login-card">
-        {/* LEFT SIDE */}
-        <div className="login-visual" style={visualStyle}>
-          <div className="login-brand">
-            <span>🌿</span>
-            <span>Farmers' Direct</span>
+      <div className="bl-card">
+        {/* LEFT BUYER VISUAL */}
+        <div className="bl-visual">
+          <div>
+            <div className="d-flex align-items-center gap-2 mb-3">
+              <span className="fs-2">🌿</span>
+              <span className="fs-4 fw-bold">{t("brandName", lang)}</span>
+            </div>
+            <div className="bl-badge">🛒 {lang === "ta" ? "வாடிக்கையாளர் தளம்" : "Buyer Marketplace"}</div>
           </div>
 
-          <div className="login-visual-content">
-            {isFarmer ? (
-              <>
-                <h1>
-                  Your harvest.
+          <div>
+            <h1 className="fw-bold display-6 mb-3">
+              {lang === "ta" ? (
+                <>
+                  உங்கள் உணவை அறியுங்கள்.
                   <br />
-                  Your price.
-                  <br />
-                  Your market.
-                </h1>
-                <p>
-                  Connect directly with customers and get more value from the
-                  produce you grow.
-                </p>
-              </>
-            ) : (
-              <>
-                <h1>
+                  உங்கள் விவசாயியை அறியுங்கள்.
+                </>
+              ) : (
+                <>
                   Know your food.
                   <br />
                   Know your farmer.
-                </h1>
-                <p>
-                  Discover fresh produce from nearby farms with transparent
-                  prices and convenient delivery.
-                </p>
-              </>
-            )}
+                </>
+              )}
+            </h1>
+            <p className="mb-0 text-white-50" style={{ fontSize: "16px" }}>
+              {lang === "ta"
+                ? "தமிழக விவசாயிகளின் புதிய அறுவடை விளைபொருட்கள் இடைத்தரகர் இன்றி உங்கள் இல்லத்திற்கு."
+                : "Discover farm-fresh vegetables, fruits, coconut, and grains directly from verified Tamil Nadu growers."}
+            </p>
           </div>
         </div>
 
-        {/* RIGHT SIDE */}
-        <div className="login-form-area">
-          <div className="login-heading">
-            <h2>{isFarmer ? "Farmer Login" : "Customer Login"}</h2>
-            <p>
-              {isFarmer
-                ? "Welcome back. Manage your harvest and products."
-                : "Welcome back. Find fresh produce from local farms."}
-            </p>
-          </div>
-
-          <div className="login-switch">
+        {/* RIGHT BUYER FORM */}
+        <div className="bl-form-area">
+          {/* LANGUAGE SELECTOR */}
+          <div className="bl-lang-bar">
+            <span className="small text-muted fw-semibold">🌐 {t("language", lang)}:</span>
             <button
               type="button"
-              className={isFarmer ? "active" : ""}
-              onClick={() => setMode("farmer")}
+              className={`bl-lang-btn ${lang === "en" ? "active" : ""}`}
+              onClick={() => handleLangChange("en")}
             >
-              Farmer
+              English
             </button>
             <button
               type="button"
-              className={!isFarmer ? "active" : ""}
-              onClick={() => setMode("customer")}
+              className={`bl-lang-btn ${lang === "ta" ? "active" : ""}`}
+              onClick={() => handleLangChange("ta")}
             >
-              Customer
+              தமிழ்
             </button>
           </div>
 
-          {error && <div className="login-error">{error}</div>}
+          <h2 className="bl-title">🛒 {t("buyerLoginTitle", lang)}</h2>
+          <p className="bl-sub">{t("buyerLoginSub", lang)}</p>
+
+          {error && <div className="alert alert-danger py-2 rounded-3 small">{error}</div>}
 
           <form onSubmit={submit}>
-            <div className="login-group">
-              <label>Email</label>
+            <div className="mb-3">
+              <label className="form-label fw-bold small text-dark">
+                {t("buyerLoginIdentifierLabel", lang)}
+              </label>
               <input
-                className="login-input"
-                type="email"
-                placeholder="you@example.com"
+                type="text"
+                className="bl-input"
+                placeholder={t("buyerLoginIdentifierPlaceholder", lang)}
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
                 required
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
               />
             </div>
 
-            <div className="login-group">
-              <label>Password</label>
+            <div className="mb-4">
+              <label className="form-label fw-bold small text-dark">
+                {t("buyerLoginPasswordLabel", lang)}
+              </label>
               <input
-                className="login-input"
                 type="password"
-                placeholder="Enter your password"
+                className="bl-input"
+                placeholder={t("buyerLoginPasswordPlaceholder", lang)}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
-                value={form.password}
-                onChange={(e) => setForm({ ...form, password: e.target.value })}
               />
             </div>
 
-            <button className="login-button" type="submit">
-              {isFarmer ? "Login as Farmer" : "Login as Customer"}
+            <button type="submit" className="bl-btn" disabled={loading}>
+              {loading ? t("processing", lang) : t("buyerLoginButton", lang)}
             </button>
           </form>
 
-          <p className="login-link">
-            Don't have an account? <Link to="/register">Create one</Link>
-          </p>
+          <div className="mt-4 pt-3 border-top text-center">
+            <p className="small text-muted mb-2">{t("noBuyerAccount", lang)}</p>
+            <Link to="/register" className="btn btn-outline-success fw-bold w-100 py-2 rounded-3">
+              🛒 {t("registerBuyerNow", lang)}
+            </Link>
+          </div>
+
+          {/* PROMINENT LINK TO FARMER LOGIN */}
+          <div className="mt-4 p-3 bg-light rounded-3 border text-center">
+            <span className="small text-muted d-block mb-1">
+              {lang === "ta" ? "நீங்கள் ஒரு விவசாயியா?" : "Are you a Tamil Nadu farmer?"}
+            </span>
+            <Link to="/farmer-login" className="fw-bold text-success text-decoration-none">
+              🌾 {lang === "ta" ? "விவசாயி உள்நுழைவு தளம்" : "Go to Dedicated Farmer Login Portal"} →
+            </Link>
+          </div>
         </div>
       </div>
     </div>

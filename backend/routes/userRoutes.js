@@ -8,14 +8,26 @@ const router = express.Router();
 router.use(protect, allow("admin"));
 
 router.get("/stats", async (req, res) => {
-  const [users, farmers, customers, products] = await Promise.all([
-    User.countDocuments(), User.countDocuments({ role: "farmer" }),
-    User.countDocuments({ role: "customer" }), Product.countDocuments()
-  ]);
-  res.json({ users, farmers, customers, products });
+  try {
+    const [users, farmers, customers, products] = await Promise.all([
+      User.countDocuments(),
+      User.countDocuments({ role: "farmer" }),
+      User.countDocuments({ role: "customer" }),
+      Product.countDocuments()
+    ]);
+    res.json({ users, farmers, customers, products });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to load admin stats", error: err.message });
+  }
 });
 
-router.get("/", async (req, res) => res.json(await User.find().select("-password").sort("-createdAt")));
+router.get("/", async (req, res) => {
+  try {
+    res.json(await User.find().select("-password").sort("-createdAt"));
+  } catch (err) {
+    res.status(500).json({ message: "Failed to load users", error: err.message });
+  }
+});
 
 router.post("/", async (req, res) => {
   try {

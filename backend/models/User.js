@@ -29,12 +29,44 @@ const userSchema = new mongoose.Schema(
 
     phone: {
       type: String,
-      trim: true
+      trim: true,
+      default: ""
     },
 
     location: {
       type: String,
+      trim: true,
+      default: ""
+    },
+
+    district: {
+      type: String,
+      trim: true,
+      default: ""
+    },
+
+    address: {
+      type: String,
+      trim: true,
+      default: ""
+    },
+
+    farmerId: {
+      type: String,
+      unique: true,
+      sparse: true,
       trim: true
+    },
+
+    preferredLanguage: {
+      type: String,
+      enum: ["en", "ta"],
+      default: "en"
+    },
+
+    isSample: {
+      type: Boolean,
+      default: false
     }
   },
   {
